@@ -44,8 +44,8 @@ export const useDetectionStore = create<DetectionState>((set) => ({
   predict: null,
   severity: null,
   cost: null,
-  setFile: (file, previewUrl) => set({ file, previewUrl, isMultiScan: false }),
-  setMultiScans: (scans) => set({ scans, isMultiScan: true }),
+  setFile: (file, previewUrl) => set({ file, previewUrl, isMultiScan: false, scans: [] }),
+  setMultiScans: (scans) => set({ scans, isMultiScan: true, file: null, previewUrl: null }),
   setResults: (payload) =>
     set((state) => ({
       ...state,
