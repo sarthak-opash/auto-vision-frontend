@@ -120,7 +120,6 @@ export function UploadPage() {
           </p>
         </div>
         
-        {/* ... (existing content) ... */}
         
         <div className="glass-card p-10 mb-8 border-dashed border-2 border-[#984216]/20 hover:border-[#984216]/40 transition-colors">
           <label className="flex flex-col items-center justify-center cursor-pointer min-h-[300px]">
