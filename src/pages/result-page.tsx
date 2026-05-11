@@ -1,7 +1,7 @@
 import jsPDF from 'jspdf'
 import { motion } from 'framer-motion'
 import { useState, useLayoutEffect } from 'react'
-import { Navigate, Link } from 'react-router-dom'
+import { useNavigate, Navigate, Link } from 'react-router-dom'
 import { useDetectionStore } from '../store/detection-store'
 import type { PredictionItem } from '../types/api'
 import { Download, FileText, ArrowLeft, ShieldCheck, DollarSign, Activity } from 'lucide-react'
@@ -15,6 +15,7 @@ function pdfImageFormat(src: string, file: File | null): 'JPEG' | 'PNG' | 'WEBP'
 }
 
 export function ResultPage() {
+  const navigate = useNavigate()
   const file = useDetectionStore((state) => state.file)
   const predict = useDetectionStore((state) => state.predict)
   const severity = useDetectionStore((state) => state.severity)
@@ -265,9 +266,18 @@ export function ResultPage() {
     <div className="mx-auto max-w-7xl px-6 py-12">
       <div className="mx-auto max-w-6xl animate-in fade-in duration-700">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
-        <div>
-          <h1 className="text-4xl font-black text-slate-900 mb-2">Assessment Results</h1>
-          <p className="text-slate-500 font-medium">Detailed breakdown of vehicle damage and repair costs</p>
+        <div className="flex items-center gap-4">
+          <button 
+            onClick={() => navigate(-1)}
+            className="w-10 h-10 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-slate-600 hover:bg-slate-50 transition-all shadow-sm group"
+            title="Go Back"
+          >
+            <ArrowLeft size={20} className="group-hover:-translate-x-0.5 transition-transform" />
+          </button>
+          <div>
+            <h1 className="text-4xl font-black text-slate-900 mb-2">Assessment Results</h1>
+            <p className="text-slate-500 font-medium">Detailed breakdown of vehicle damage and repair costs</p>
+          </div>
         </div>
         <div className="flex items-center gap-3">
           <Link to="/upload">
