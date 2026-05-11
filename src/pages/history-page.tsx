@@ -1,12 +1,15 @@
 import { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/auth-context'
 import { ShieldCheck, Activity, Calendar, User as UserIcon, ArrowRight } from 'lucide-react'
+import { useDetectionStore } from '../store/detection-store'
 
 export function HistoryPage() {
   const [history, setHistory] = useState([])
   const [loading, setLoading] = useState(true)
   const { token, user } = useAuth()
+  const navigate = useNavigate()
+  const setResults = useDetectionStore((state) => state.setResults)
 
   useEffect(() => {
     const fetchHistory = async () => {
@@ -24,6 +27,18 @@ export function HistoryPage() {
     }
     fetchHistory()
   }, [token])
+
+  const handleViewReport = (item: any) => {
+    setResults({
+      upload: { message: 'Loaded from history', filename: item.imageUrl.split('/').pop() || '' },
+      predict: item.results.predict,
+      severity: item.results.severity,
+      cost: item.results.cost,
+    })
+    // We need to set previewUrl separately or include it in setResults
+    useDetectionStore.setState({ previewUrl: item.imageUrl })
+    navigate('/result')
+  }
 
   return (
     <div className="mx-auto max-w-7xl px-6 py-12">
@@ -58,7 +73,11 @@ export function HistoryPage() {
       ) : (
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {history.map((item: any) => (
-            <div key={item._id} className="glass-card p-6 group hover:border-[#984216]/30 transition-all cursor-pointer">
+            <div 
+              key={item._id} 
+              onClick={() => handleViewReport(item)}
+              className="glass-card p-6 group hover:border-[#984216]/30 transition-all cursor-pointer"
+            >
               <div className="flex items-start justify-between mb-6">
                 <div className="w-12 h-12 rounded-2xl bg-slate-100 flex items-center justify-center text-slate-400 group-hover:bg-brand-50 group-hover:text-[#984216] transition-colors">
                   <ShieldCheck size={24} />
@@ -93,9 +112,15 @@ export function HistoryPage() {
                 <div className="text-sm font-bold text-slate-900">
                   {item.results.cost.cost_estimation.currency}{item.results.cost.cost_estimation.grand_total}
                 </div>
-                <div className="text-brand-600 opacity-0 group-hover:opacity-100 transition-all flex items-center gap-1 text-xs font-bold uppercase tracking-widest">
+                <button 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleViewReport(item);
+                  }}
+                  className="text-brand-600 opacity-0 group-hover:opacity-100 transition-all flex items-center gap-1 text-xs font-bold uppercase tracking-widest"
+                >
                   View Report <ArrowRight size={14} />
-                </div>
+                </button>
               </div>
             </div>
           ))}

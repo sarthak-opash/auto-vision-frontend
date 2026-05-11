@@ -21,6 +21,9 @@ const SignupPage = lazy(async () =>
 const HistoryPage = lazy(async () =>
   import('./pages/history-page').then((module) => ({ default: module.HistoryPage })),
 )
+const UsersPage = lazy(async () =>
+  import('./pages/users-page').then((module) => ({ default: module.UsersPage })),
+)
 
 const router = createBrowserRouter([
   {
@@ -33,6 +36,8 @@ const router = createBrowserRouter([
           { path: '/result', element: <ResultPage /> },
           { path: '/login', element: <LoginPage /> },
           { path: '/signup', element: <SignupPage /> },
+          { path: '/history', element: <HistoryPage /> },
+          { path: '/users', element: <UsersPage /> },
         ],
       },
     ],

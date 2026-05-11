@@ -45,6 +45,19 @@ export function Navbar() {
             </Link>
           ))}
           
+          {user?.role === 'admin' && (
+            <Link
+              to="/users"
+              className={`text-sm font-semibold transition-all hover:text-[#984216] ${
+                location.pathname === '/users'
+                  ? 'text-[#984216]'
+                  : 'text-[#64748b]'
+              }`}
+            >
+              Users
+            </Link>
+          )}
+          
           {user ? (
             <div className="flex items-center gap-6 pl-6 border-l border-slate-200">
               <div className="flex items-center gap-3">
@@ -97,6 +110,18 @@ export function Navbar() {
                 {link.label}
               </Link>
             ))}
+
+            {user?.role === 'admin' && (
+              <Link
+                to="/users"
+                onClick={() => setMobileOpen(false)}
+                className={`text-lg font-bold ${
+                  location.pathname === '/users' ? 'text-[#984216]' : 'text-[#64748b]'
+                }`}
+              >
+                Users
+              </Link>
+            )}
             
             {user ? (
               <div className="flex items-center justify-between pt-6 border-t border-slate-100">
