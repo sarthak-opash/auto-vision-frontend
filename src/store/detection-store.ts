@@ -26,7 +26,11 @@ export const useDetectionStore = create<DetectionState>((set) => ({
   severity: null,
   cost: null,
   setFile: (file, previewUrl) => set({ file, previewUrl }),
-  setResults: (payload) => set(payload),
+  setResults: (payload) =>
+    set((state) => ({
+      ...state,
+      ...payload,
+    })),
   clear: () =>
     set({
       file: null,

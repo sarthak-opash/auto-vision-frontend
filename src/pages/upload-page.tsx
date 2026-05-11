@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import { AxiosError } from 'axios'
 import { estimateCost, getVehicleCatalog, predictDamage, predictSeverity, uploadFile } from '../api/detection'
 import { useDetectionStore } from '../store/detection-store'
+import { fileToCompressedJpegDataUrl } from '../utils/history-image'
 import { Upload, Car, Calendar, Search, Loader2, AlertCircle } from 'lucide-react'
 
 export function UploadPage() {
@@ -77,6 +78,14 @@ export function UploadPage() {
 
       setResults({ upload, predict, severity, cost })
 
+      // Smaller JPEG data URL so MongoDB (16MB) + JSON body succeed; survives reload/history
+      let imageUrlForHistory = previewUrl ?? ''
+      try {
+        imageUrlForHistory = await fileToCompressedJpegDataUrl(file)
+      } catch {
+        imageUrlForHistory = previewUrl ?? ''
+      }
+
       // Save to History API if logged in
       const token = localStorage.getItem('token')
       if (token) {
@@ -90,8 +99,8 @@ export function UploadPage() {
             body: JSON.stringify({
               vehicleInfo: { make, model: vehicleModel, year },
               results: { predict, severity, cost },
-              imageUrl: previewUrl
-            })
+              imageUrl: imageUrlForHistory,
+            }),
           })
         } catch (err) {
           console.error('Failed to save to history:', err)

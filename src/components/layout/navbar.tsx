@@ -23,11 +23,11 @@ export function Navbar() {
   return (
     <nav className="sticky top-0 z-50 bg-white/40 backdrop-blur-md border-b border-white/20">
       <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-6">
-        <Link to="/" className="flex items-center gap-2 group">
-          <div className="w-10 h-10 bg-[#984216] rounded-xl flex items-center justify-center shadow-lg group-hover:rotate-6 transition-transform">
-            <span className="text-white font-bold text-xl">A</span>
+        <Link to="/" className="flex items-center gap-4 group">
+          <div className="w-14 h-14 bg-slate-50 rounded-2xl flex items-center justify-center shadow-inner group-hover:scale-105 transition-transform border border-slate-200 overflow-hidden">
+            <img src="/logo.png" alt="AutoVision Logo" className="w-full h-full object-cover" />
           </div>
-          <span className="heading-gradient text-2xl font-black tracking-tight">AutoVision</span>
+          <span className="heading-gradient text-3xl font-black tracking-tight">AutoVision</span>
         </Link>
 
         <div className="hidden items-center gap-8 md:flex">
@@ -54,7 +54,7 @@ export function Navbar() {
                   : 'text-[#64748b]'
               }`}
             >
-              Users
+              Admin
             </Link>
           )}
           
@@ -119,7 +119,7 @@ export function Navbar() {
                   location.pathname === '/users' ? 'text-[#984216]' : 'text-[#64748b]'
                 }`}
               >
-                Users
+                Admin
               </Link>
             )}
             

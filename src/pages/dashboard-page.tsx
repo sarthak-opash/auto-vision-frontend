@@ -90,9 +90,9 @@ export function DashboardPage() {
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.8 }}
             >
-              <div className="relative z-10 glass-card p-4 animate-float">
+              <div className="relative z-10 glass-card p-4">
                 <img 
-                  src="/hero-car.png" 
+                  src="/hero-vision.png" 
                   alt="AutoVision Hero" 
                   className="rounded-2xl w-full h-auto object-cover shadow-2xl"
                 />
@@ -104,7 +104,7 @@ export function DashboardPage() {
                       <ChevronRight size={18} />
                     </div>
                     <div>
-                      <div className="text-xs font-bold text-slate-400 uppercase">Status</div>
+                      <div className="text-xs font-bold text-slate-600 uppercase">Status</div>
                       <div className="text-sm font-bold text-slate-900">Scan Complete</div>
                     </div>
                   </div>

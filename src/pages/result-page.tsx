@@ -1,19 +1,38 @@
 import jsPDF from 'jspdf'
 import { motion } from 'framer-motion'
-import { useState } from 'react'
+import { useState, useLayoutEffect } from 'react'
 import { Navigate, Link } from 'react-router-dom'
 import { useDetectionStore } from '../store/detection-store'
 import type { PredictionItem } from '../types/api'
 import { Download, FileText, ArrowLeft, ShieldCheck, DollarSign, Activity } from 'lucide-react'
+
+function pdfImageFormat(src: string, file: File | null): 'JPEG' | 'PNG' | 'WEBP' {
+  if (src.startsWith('data:image/png')) return 'PNG'
+  if (src.startsWith('data:image/webp')) return 'WEBP'
+  if (file?.type === 'image/png') return 'PNG'
+  if (file?.type === 'image/webp') return 'WEBP'
+  return 'JPEG'
+}
 
 export function ResultPage() {
   const file = useDetectionStore((state) => state.file)
   const predict = useDetectionStore((state) => state.predict)
   const severity = useDetectionStore((state) => state.severity)
   const cost = useDetectionStore((state) => state.cost)
-  const previewUrl = useDetectionStore((state) => state.previewUrl)
+  const previewUrlFromStore = useDetectionStore((state) => state.previewUrl)
+  const [displaySrc, setDisplaySrc] = useState<string | null>(null)
   const [imageSize, setImageSize] = useState({ width: 1, height: 1 })
   const [isGenerating, setIsGenerating] = useState(false)
+
+  useLayoutEffect(() => {
+    if (file) {
+      const url = URL.createObjectURL(file)
+      setDisplaySrc(url)
+      return () => URL.revokeObjectURL(url)
+    }
+    setDisplaySrc(previewUrlFromStore)
+    return undefined
+  }, [file, previewUrlFromStore])
 
   if (!predict || !severity || !cost) {
     return <Navigate to="/upload" replace />
@@ -90,7 +109,7 @@ export function ResultPage() {
 
       // --- 2. ANNOTATED DAMAGE IMAGE ---
       y = sectionHeader('2. Annotated Damage Image', y + 5)
-      if (previewUrl) {
+      if (displaySrc) {
         const imgWidth = 165
         const actualWidth = imageSize.width > 1 ? imageSize.width : 1200
         const actualHeight = imageSize.height > 1 ? imageSize.height : 800
@@ -102,8 +121,8 @@ export function ResultPage() {
         }
         
         try {
-          // Add image to PDF
-          doc.addImage(previewUrl, 'JPEG', 14, y, imgWidth, imgHeight)
+          const fmt = pdfImageFormat(displaySrc, file)
+          doc.addImage(displaySrc, fmt, 14, y, imgWidth, imgHeight)
           
           // Draw Bounding Boxes
           doc.setDrawColor(152, 66, 22)
@@ -139,11 +158,11 @@ export function ResultPage() {
       doc.setFillColor(brandDark[0], brandDark[1], brandDark[2])
       doc.rect(14, y, 182, 6, 'F')
       doc.setFontSize(8)
-      doc.text(' Part', 14, y + 4.5)
-      doc.text(' Damage Type', 84, y + 4.5)
-      doc.text(' Confidence', 124, y + 4.5)
-      doc.text(' Area Ratio', 154, y + 4.5)
-      doc.text(' Score', 180, y + 4.5)
+      doc.text(' Part', 15, y + 4.5)
+      doc.text(' Damage Type', 65, y + 4.5)
+      doc.text(' Confidence', 115, y + 4.5)
+      doc.text(' Area Ratio', 145, y + 4.5)
+      doc.text(' Score', 175, y + 4.5)
       y += 6
       doc.setTextColor(brandDark[0], brandDark[1], brandDark[2])
       const damageTable = severity.severity_report.damage_table || []
@@ -151,11 +170,11 @@ export function ResultPage() {
         if (i % 2 === 0) doc.setFillColor(245, 245, 247)
         else doc.setFillColor(255, 255, 255)
         doc.rect(14, y, 182, 6, 'F')
-        doc.text(` ${det.part}`, 14, y + 4)
-        doc.text(` ${det.damage_type}`, 84, y + 4)
-        doc.text(` ${Math.round(det.confidence * 100)}%`, 124, y + 4)
-        doc.text(` ${det.area.toFixed(3)}`, 154, y + 4)
-        doc.text(` ${det.damage_score.toFixed(3)}`, 180, y + 4)
+        doc.text(` ${det.part}`, 15, y + 4)
+        doc.text(` ${det.damage_type}`, 65, y + 4)
+        doc.text(` ${Math.round(det.confidence * 100)}%`, 115, y + 4)
+        doc.text(` ${det.area.toFixed(3)}`, 145, y + 4)
+        doc.text(` ${det.damage_score.toFixed(3)}`, 175, y + 4)
         y += 6
       })
       y += 5
@@ -164,7 +183,7 @@ export function ResultPage() {
       if (y > 220) { doc.addPage(); y = 20 }
       y = sectionHeader('4. Severity Analysis', y)
       doc.setFontSize(9)
-      doc.setTextColor(brandDark[0], brandDark[1], brandDark[2]) // Fix: Set text color to dark
+      doc.setTextColor(brandDark[0], brandDark[1], brandDark[2])
       const sevInfo = [
         ['Overall Level', severity.severity_report.severity_level],
         ['Overall Score', `${severity.severity_report.severity_score} / 100`],
@@ -183,43 +202,55 @@ export function ResultPage() {
       y += 4
       doc.setFont('helvetica', 'bold'); doc.text('  Per-Part Breakdown:', 14, y); y += 5
       doc.setFillColor(brandDark[0], brandDark[1], brandDark[2]); doc.rect(14, y, 182, 6, 'F'); doc.setTextColor(255, 255, 255); doc.setFontSize(8)
-      doc.text(' Part', 14, y + 4.5); doc.text(' Level', 64, y + 4.5); doc.text(' Score', 89, y + 4.5); doc.text(' Damage Types', 109, y + 4.5); doc.text(' Structural', 149, y + 4.5); doc.text(' Safety Critical', 170, y + 4.5)
+      doc.text(' Part', 15, y + 4.5); doc.text(' Level', 55, y + 4.5); doc.text(' Score', 80, y + 4.5); doc.text(' Damage Types', 100, y + 4.5); doc.text(' Structural', 145, y + 4.5); doc.text(' Safety Critical', 170, y + 4.5)
       y += 6; doc.setTextColor(brandDark[0], brandDark[1], brandDark[2])
       Object.entries(severity.severity_report.part_severity).forEach(([p, info], i) => {
         if (i % 2 === 0) doc.setFillColor(245, 245, 247)
         else doc.setFillColor(255, 255, 255)
         doc.rect(14, y, 182, 6, 'F')
-        doc.text(` ${p}`, 14, y + 4); doc.text(` ${info.severity_level}`, 64, y + 4); doc.text(` ${info.severity_score.toFixed(1)}`, 89, y + 4); doc.text(` ${info.damage_types.join(', ')}`, 109, y + 4); doc.text(` ${info.is_structural ? 'Yes' : 'No'}`, 149, y + 4); doc.text(` ${info.is_safety_critical ? 'Yes' : 'No'}`, 170, y + 4); y += 6
+        doc.text(` ${p}`, 15, y + 4); doc.text(` ${info.severity_level}`, 55, y + 4); doc.text(` ${info.severity_score.toFixed(1)}`, 80, y + 4); doc.text(` ${info.damage_types.join(', ')}`, 100, y + 4); doc.text(` ${info.is_structural ? 'Yes' : 'No'}`, 145, y + 4); doc.text(` ${info.is_safety_critical ? 'Yes' : 'No'}`, 170, y + 4); y += 6
       })
 
       // --- 5. REPAIR COST ESTIMATE ---
       if (y > 220) { doc.addPage(); y = 20 }
       y = sectionHeader('5. Repair Cost Estimate', y + 5)
       doc.setFillColor(brandDark[0], brandDark[1], brandDark[2]); doc.rect(14, y, 182, 6, 'F'); doc.setTextColor(255, 255, 255)
-      doc.text(' Part', 14, y + 4.5); doc.text(' Repair Action', 84, y + 4.5); doc.text(' Severity', 144, y + 4.5); doc.text(' Est. Cost', 180, y + 4.5)
+      doc.setFontSize(8)
+      doc.text(' Part', 15, y + 4.5); doc.text(' Repair Action', 55, y + 4.5); doc.text(' Severity', 135, y + 4.5); doc.text(' Est. Cost', 195, y + 4.5, { align: 'right' })
       y += 6; doc.setTextColor(brandDark[0], brandDark[1], brandDark[2])
+      doc.setFontSize(8)
       cost.cost_estimation.line_items.forEach((item, i) => {
         if (i % 2 === 0) doc.setFillColor(245, 245, 247)
         else doc.setFillColor(255, 255, 255)
         doc.rect(14, y, 182, 6, 'F')
-        doc.text(` ${item.part}`, 14, y + 4); doc.text(` ${item.repair_action}`, 84, y + 4); doc.text(` ${item.severity_level}`, 144, y + 4); doc.text(` ${cost.cost_estimation.currency} ${item.estimated_cost}`, 180, y + 4); y += 6
+        doc.text(` ${item.part}`, 15, y + 4); doc.text(` ${item.repair_action}`, 55, y + 4); doc.text(` ${item.severity_level}`, 135, y + 4); doc.text(`${cost.cost_estimation.currency} ${item.estimated_cost}`, 195, y + 4, { align: 'right' }); y += 6
       })
-      // Totals
+
+      // --- 6. FINAL COST SUMMARY ---
+      if (y > 240) { doc.addPage(); y = 20 }
+      y = sectionHeader('6. Final Cost Summary', y + 5)
       const totals = [
         ['Parts Subtotal', `${cost.cost_estimation.currency} ${cost.cost_estimation.parts_total}`],
         ['Labour (20%)', `${cost.cost_estimation.currency} ${cost.cost_estimation.labor_total}`],
         ['GRAND TOTAL', `${cost.cost_estimation.currency} ${cost.cost_estimation.grand_total}`],
       ]
       totals.forEach(([label, val], i) => {
-        if (label.includes('GRAND')) doc.setFillColor(235, 240, 248)
+        if (label.includes('GRAND')) {
+          doc.setFillColor(235, 240, 248)
+          doc.setFont('helvetica', 'bold')
+        }
         else if (i % 2 === 0) doc.setFillColor(245, 245, 247)
         else doc.setFillColor(255, 255, 255)
-        doc.rect(14, y, 182, 7, 'F'); doc.setFont('helvetica', 'bold'); doc.text(`  ${label}`, 14, y + 5); doc.text(val, 180, y + 5, { align: 'right' }); y += 7
+        doc.rect(14, y, 182, 8, 'F')
+        doc.setTextColor(brandDark[0], brandDark[1], brandDark[2])
+        doc.text(`  ${label}`, 14, y + 5.5)
+        doc.text(val, 195, y + 5.5, { align: 'right' })
+        y += 8
       })
 
-      // --- 6. DISCLAIMER ---
+      // --- 7. DISCLAIMER ---
       if (y > 260) { doc.addPage(); y = 20 }
-      y = sectionHeader('6. Disclaimer', y + 5)
+      y = sectionHeader('7. Disclaimer', y + 5)
       doc.setFontSize(8); doc.setFont('helvetica', 'italic'); doc.setTextColor(brandDark[0], brandDark[1], brandDark[2])
       doc.text('This report is generated by an AI system for informational purposes only. It does not constitute a professional insurance assessment or certified repair quote. Consult a certified mechanic or IRDAI-authorised insurance surveyor for official claims.', 14, y + 5, { maxWidth: 182 })
 
@@ -253,14 +284,19 @@ export function ResultPage() {
       <div className="grid lg:grid-cols-3 gap-8">
         {/* Left Column: Visuals */}
         <div className="lg:col-span-2 space-y-8">
-          {previewUrl && (
+          {displaySrc ? (
             <div className="glass-card p-4">
               <DamageImageOverlay
-                previewUrl={previewUrl}
+                previewUrl={displaySrc}
                 predictions={predict.predictions}
                 imageSize={imageSize}
                 onImageLoad={setImageSize}
               />
+            </div>
+          ) : (
+            <div className="glass-card p-8 text-center text-slate-500 text-sm font-medium leading-relaxed">
+              No image URL is available for this session (for example, an old history entry may only have a
+              temporary browser link). Run a new analysis from Upload to see the vehicle image here.
             </div>
           )}
 

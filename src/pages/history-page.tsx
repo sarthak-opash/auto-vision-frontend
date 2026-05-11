@@ -1,16 +1,15 @@
 import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/auth-context'
-import { ShieldCheck, Activity, Calendar, User as UserIcon, ArrowRight } from 'lucide-react'
+import { ShieldCheck, Calendar, User as UserIcon, ArrowRight, Mail } from 'lucide-react'
 import { useDetectionStore } from '../store/detection-store'
+import { historyImageSrc } from '../utils/history-image'
 
 export function HistoryPage() {
   const [history, setHistory] = useState([])
   const [loading, setLoading] = useState(true)
   const { token, user } = useAuth()
   const navigate = useNavigate()
-  const setResults = useDetectionStore((state) => state.setResults)
-
   useEffect(() => {
     const fetchHistory = async () => {
       try {
@@ -29,14 +28,16 @@ export function HistoryPage() {
   }, [token])
 
   const handleViewReport = (item: any) => {
-    setResults({
-      upload: { message: 'Loaded from history', filename: item.imageUrl.split('/').pop() || '' },
+    if (!item?.results) return
+    const img = historyImageSrc(item.imageUrl)
+    useDetectionStore.setState({
+      file: null,
+      previewUrl: img,
+      upload: { message: 'Loaded from history', filename: 'assessment.jpg' },
       predict: item.results.predict,
       severity: item.results.severity,
       cost: item.results.cost,
     })
-    // We need to set previewUrl separately or include it in setResults
-    useDetectionStore.setState({ previewUrl: item.imageUrl })
     navigate('/result')
   }
 
@@ -72,12 +73,24 @@ export function HistoryPage() {
         </div>
       ) : (
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {history.map((item: any) => (
+          {history.map((item: any) => {
+            const thumb = historyImageSrc(item.imageUrl)
+            return (
             <div 
               key={item._id} 
               onClick={() => handleViewReport(item)}
               className="glass-card p-6 group hover:border-[#984216]/30 transition-all cursor-pointer"
             >
+              {thumb ? (
+                <div className="mb-4 overflow-hidden rounded-2xl bg-slate-100 ring-1 ring-slate-100">
+                  <img
+                    src={thumb}
+                    alt=""
+                    className="h-40 w-full object-cover"
+                    loading="lazy"
+                  />
+                </div>
+              ) : null}
               <div className="flex items-start justify-between mb-6">
                 <div className="w-12 h-12 rounded-2xl bg-slate-100 flex items-center justify-center text-slate-400 group-hover:bg-brand-50 group-hover:text-[#984216] transition-colors">
                   <ShieldCheck size={24} />
@@ -101,10 +114,24 @@ export function HistoryPage() {
                   {new Date(item.createdAt).toLocaleDateString()}
                 </div>
                 {user?.role === 'admin' && (
-                  <div className="flex items-center gap-2 text-xs text-[#984216] font-bold">
-                    <UserIcon size={14} />
-                    Owner: {item.userName}
-                  </div>
+                  <>
+                    <div className="flex items-center gap-2 text-xs text-[#984216] font-bold">
+                      <UserIcon size={14} />
+                      Owner: {item.ownerName || item.userName}
+                    </div>
+                    {(item.ownerEmail ||
+                      item.userEmail ||
+                      (typeof item.userId === 'object' && item.userId?.email)) && (
+                      <div className="flex items-center gap-2 text-xs text-slate-500 font-medium">
+                        <Mail size={14} className="text-slate-400 shrink-0" />
+                        <span className="truncate">
+                          {item.ownerEmail ||
+                            item.userEmail ||
+                            (typeof item.userId === 'object' ? item.userId?.email : '')}
+                        </span>
+                      </div>
+                    )}
+                  </>
                 )}
               </div>
 
@@ -123,7 +150,8 @@ export function HistoryPage() {
                 </button>
               </div>
             </div>
-          ))}
+            )
+          })}
         </div>
       )}
     </div>
