@@ -7,7 +7,7 @@ import { nodeApiUrl } from '../api/node-base-url'
 import { historyImageSrc } from '../utils/history-image'
 
 export function HistoryPage() {
-  const [history, setHistory] = useState([])
+  const [history, setHistory] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const { token, user } = useAuth()
   const navigate = useNavigate()

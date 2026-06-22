@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { getToken } from '../services/auth-storage'
-import { PYTHON_API_BASE_URL } from './python-base-url'ASE_URL } from './python-base-url'ASE_URL } from './python-base-url'ASE_URL } from './python-base-url'
+import { PYTHON_API_BASE_URL } from './python-base-url'
 
 export const apiClient = axios.create({
   baseURL: PYTHON_API_BASE_URL,

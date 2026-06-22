@@ -42,7 +42,7 @@ type AdminTab = 'users' | 'reports' | 'analytics'
 
 export function UsersPage() {
   const [tab, setTab] = useState<AdminTab>('users')
-  const [users, setUsers] = useState([])
+  const [users, setUsers] = useState<any[]>([])
   const [reports, setReports] = useState<ReportRow[]>([])
   const [loading, setLoading] = useState(true)
   const [reportsLoading, setReportsLoading] = useState(false)

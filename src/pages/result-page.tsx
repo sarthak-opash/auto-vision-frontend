@@ -199,7 +199,6 @@ export function ResultPage() {
       const renderImageSection = async (
         sectionTitle: string,
         imageSrc: string,
-        imageFile: File | null,
         rows: ReportDamageRow[],
         predictions: PredictionItem[],
       ) => {
@@ -315,7 +314,6 @@ export function ResultPage() {
           await renderImageSection(
             `2.${idx + 1} ${scan.label} Damage Report`,
             scan.previewUrl,
-            scan.file ?? null,
             scanRows,
             scanPredictions,
           )
@@ -324,7 +322,6 @@ export function ResultPage() {
         await renderImageSection(
           '2. Annotated Damage Image',
           displaySrc,
-          file,
           detailedDamageRows,
           allPredictions,
         )

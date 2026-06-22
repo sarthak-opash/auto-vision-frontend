@@ -2,9 +2,14 @@ import { create } from 'zustand'
 import type { CostEstimationResponse, PredictResponse, SeverityResponse, UploadResponse } from '../types/api'
 
 interface ScanItem {
-  file: File
+  file: File | null
   previewUrl: string
   label: string // Front, Rear, Left, Right, Roof
+}
+
+interface HistoryUploadItem {
+  message: string
+  filename: string
 }
 
 interface DetectionState {
@@ -19,7 +24,7 @@ interface DetectionState {
   scans: ScanItem[]
   
   // Results (Aggregated)
-  upload: UploadResponse | null
+  upload: UploadResponse | HistoryUploadItem | null
   predict: PredictResponse | null
   severity: SeverityResponse | null
   cost: CostEstimationResponse | null
@@ -27,7 +32,7 @@ interface DetectionState {
   setFile: (file: File, previewUrl: string) => void
   setMultiScans: (scans: ScanItem[]) => void
   setResults: (payload: {
-    upload: UploadResponse
+    upload: UploadResponse | HistoryUploadItem
     predict: PredictResponse
     severity: SeverityResponse
     cost: CostEstimationResponse
