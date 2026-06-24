@@ -174,8 +174,79 @@ body {
   width: 200%;
   height: 100%;
   background-image: repeating-linear-gradient(90deg, #984216 0px, #984216 10px, transparent 10px, transparent 20px);
-  animation: roadPass 0.3s linear infinite;
+  animation: roadPass 0.25s linear infinite;
 }
+
+@keyframes wheelSpin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes carBodyVibrate {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  25% { transform: translateY(-0.8px) rotate(0.4deg); }
+  50% { transform: translateY(0.8px) rotate(-0.4deg); }
+  75% { transform: translateY(-0.4px) rotate(0deg); }
+}
+
+@keyframes smokeFloat {
+  0% {
+    transform: translate(0, 0) scale(0.4);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.8;
+  }
+  90% {
+    opacity: 0.15;
+  }
+  100% {
+    transform: translate(-25px, -8px) scale(1.5);
+    opacity: 0;
+  }
+}
+
+@keyframes headlightPulse {
+  0%, 100% { opacity: 0.15; }
+  50% { opacity: 0.35; }
+}
+
+.animate-wheel-spin-custom-rear {
+  animation: wheelSpin 0.2s linear infinite;
+  transform-origin: 35px 38px;
+}
+
+.animate-wheel-spin-custom-front {
+  animation: wheelSpin 0.2s linear infinite;
+  transform-origin: 75px 38px;
+}
+
+.animate-car-vibrate-custom {
+  animation: carBodyVibrate 0.12s ease-in-out infinite;
+  transform-origin: 55px 38px;
+}
+
+.animate-smoke-puff-1 {
+  animation: smokeFloat 0.9s ease-out infinite;
+  transform-origin: 15px 36px;
+}
+
+.animate-smoke-puff-2 {
+  animation: smokeFloat 0.9s ease-out infinite;
+  animation-delay: 0.3s;
+  transform-origin: 15px 36px;
+}
+
+.animate-smoke-puff-3 {
+  animation: smokeFloat 0.9s ease-out infinite;
+  animation-delay: 0.6s;
+  transform-origin: 15px 36px;
+}
+
+.animate-headlight-beam {
+  animation: headlightPulse 1.2s ease-in-out infinite;
+}
+
 
 @keyframes carRunCrash {
   0% {
