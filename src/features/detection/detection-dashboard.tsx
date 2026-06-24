@@ -18,6 +18,7 @@ import { Button } from '../../components/ui/button'
 import { Card } from '../../components/ui/card'
 import { Input } from '../../components/ui/input'
 import { Skeleton } from '../../components/ui/skeleton'
+import { Car } from 'lucide-react'
 import type { CostLineItem } from '../../types/api'
 
 const severityColors: Record<string, string> = { Low: '#16a34a', Medium: '#f59e0b', High: '#f97316', Critical: '#ef4444' }
@@ -212,6 +213,29 @@ export function DetectionDashboard() {
         <p className="mb-3 text-sm text-[#4B4B4B]">Damage-wise Breakdown</p>
         <DamageTable rows={costReport?.line_items ?? []} />
       </Card>
+
+      {/* Car-themed loading overlay */}
+      {loading && (
+        <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-[4px] z-50 flex items-center justify-center p-6 animate-in fade-in duration-300">
+          <div className="bg-white rounded-3xl p-8 max-w-sm w-full text-center shadow-2xl border border-slate-100 flex flex-col items-center animate-in zoom-in-95 duration-300">
+            {/* Animated Car Icon inside themed pulse ring */}
+            <div className="w-16 h-16 bg-[#984216]/10 rounded-full flex items-center justify-center text-[#984216] mb-5 animate-pulse">
+              <Car size={32} className="animate-bounce" />
+            </div>
+            
+            <h3 className="text-xl font-black text-slate-900 mb-2">Analyzing Vehicle</h3>
+            <p className="text-slate-500 text-sm font-semibold mb-6 leading-relaxed">
+              Scanning image for damages, identifying affected parts, and sourcing repair costs...
+            </p>
+            
+            {/* Simple Pulsing Progress Bar */}
+            <div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden mb-2">
+              <div className="h-full bg-[#984216] rounded-full animate-pulse" style={{ width: '70%' }}></div>
+            </div>
+            <span className="text-[10px] font-black uppercase tracking-wider text-[#984216]/70">Processing Pipeline</span>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
