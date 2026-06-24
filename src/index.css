@@ -154,3 +154,27 @@ body {
   animation: float 4s ease-in-out infinite;
 }
 
+@keyframes carEngine {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  25% { transform: translateY(-1px) rotate(0.5deg) translateX(0.5px); }
+  50% { transform: translateY(1px) rotate(-0.5deg) translateX(-0.5px); }
+  75% { transform: translateY(-0.5px) rotate(0deg) translateX(0.2px); }
+}
+
+@keyframes roadPass {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-20px); }
+}
+
+.animate-car-engine {
+  animation: carEngine 0.15s linear infinite;
+}
+
+.animate-road-pass {
+  width: 200%;
+  height: 100%;
+  background-image: repeating-linear-gradient(90deg, #984216 0px, #984216 10px, transparent 10px, transparent 20px);
+  animation: roadPass 0.3s linear infinite;
+}
+
+

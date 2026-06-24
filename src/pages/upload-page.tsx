@@ -14,6 +14,7 @@ export function UploadPage() {
   const [vehicleModel, setVehicleModel] = useState('')
   const [year, setYear] = useState<number | undefined>(undefined)
   const [requestError, setRequestError] = useState<string | null>(null)
+  const [isFullScanning, setIsFullScanning] = useState(false)
   
   // Multi-scan state
   const [multiFiles, setMultiFiles] = useState<Record<string, File | null>>({
@@ -47,7 +48,8 @@ export function UploadPage() {
     uploadMutation.isPending ||
     predictMutation.isPending ||
     severityMutation.isPending ||
-    costMutation.isPending
+    costMutation.isPending ||
+    isFullScanning
 
   const onSelectSingleFile = (selected?: File) => {
     if (!selected) return
@@ -98,24 +100,29 @@ export function UploadPage() {
         })
       } else {
         // Multi-angle scan
-        const files = filesToProcess.map(f => f.file)
-        const fullResults = await fullScan(files, { make, model: vehicleModel, year })
-        
-        // Mocking upload result for the first image just to satisfy the store/UI
-        const u = await uploadMutation.mutateAsync(files[0])
+        setIsFullScanning(true)
+        try {
+          const files = filesToProcess.map(f => f.file)
+          const fullResults = await fullScan(files, { make, model: vehicleModel, year })
+          
+          // Mocking upload result for the first image just to satisfy the store/UI
+          const u = await uploadMutation.mutateAsync(files[0])
 
-        setResults({
-          upload: u,
-          predict: { predictions: fullResults.severity_report.detection_boxes ?? [], count: fullResults.count },
-          severity: fullResults,
-          cost: fullResults
-        })
+          setResults({
+            upload: u,
+            predict: { predictions: fullResults.severity_report.detection_boxes ?? [], count: fullResults.count },
+            severity: fullResults,
+            cost: fullResults
+          })
 
-        setMultiScans(filesToProcess.map(f => ({
-          file: f.file,
-          label: f.label,
-          previewUrl: multiPreviews[f.label] || ''
-        })))
+          setMultiScans(filesToProcess.map(f => ({
+            file: f.file,
+            label: f.label,
+            previewUrl: multiPreviews[f.label] || ''
+          })))
+        } finally {
+          setIsFullScanning(false)
+        }
       }
 
       // Save to History logic
@@ -350,9 +357,16 @@ export function UploadPage() {
       {loading && (
         <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-[4px] z-50 flex items-center justify-center p-6 animate-in fade-in duration-300">
           <div className="bg-white rounded-3xl p-8 max-w-sm w-full text-center shadow-2xl border border-slate-100 flex flex-col items-center animate-in zoom-in-95 duration-300">
-            {/* Animated Car Icon inside themed pulse ring */}
-            <div className="w-16 h-16 bg-[#984216]/10 rounded-full flex items-center justify-center text-[#984216] mb-5 animate-pulse">
-              <Car size={32} className="animate-bounce" />
+            {/* Animated Driving Car */}
+            <div className="relative mb-5 flex flex-col items-center justify-end h-16 w-48 overflow-hidden">
+              {/* Car Icon */}
+              <div className="text-[#984216] animate-car-engine mb-1">
+                <Car size={36} />
+              </div>
+              {/* Moving Road */}
+              <div className="w-full h-[2px] bg-slate-200 overflow-hidden relative">
+                <div className="absolute inset-0 animate-road-pass"></div>
+              </div>
             </div>
             
             <h3 className="text-xl font-black text-slate-900 mb-2">Analyzing Vehicle</h3>

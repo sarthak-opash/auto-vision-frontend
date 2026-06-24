@@ -218,9 +218,16 @@ export function DetectionDashboard() {
       {loading && (
         <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-[4px] z-50 flex items-center justify-center p-6 animate-in fade-in duration-300">
           <div className="bg-white rounded-3xl p-8 max-w-sm w-full text-center shadow-2xl border border-slate-100 flex flex-col items-center animate-in zoom-in-95 duration-300">
-            {/* Animated Car Icon inside themed pulse ring */}
-            <div className="w-16 h-16 bg-[#984216]/10 rounded-full flex items-center justify-center text-[#984216] mb-5 animate-pulse">
-              <Car size={32} className="animate-bounce" />
+            {/* Animated Driving Car */}
+            <div className="relative mb-5 flex flex-col items-center justify-end h-16 w-48 overflow-hidden">
+              {/* Car Icon */}
+              <div className="text-[#984216] animate-car-engine mb-1">
+                <Car size={36} />
+              </div>
+              {/* Moving Road */}
+              <div className="w-full h-[2px] bg-slate-200 overflow-hidden relative">
+                <div className="absolute inset-0 animate-road-pass"></div>
+              </div>
             </div>
             
             <h3 className="text-xl font-black text-slate-900 mb-2">Analyzing Vehicle</h3>
