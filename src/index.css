@@ -246,7 +246,47 @@ body {
 .animate-headlight-beam {
   animation: headlightPulse 1.2s ease-in-out infinite;
 }
+@keyframes carVibrate3d {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  25% { transform: translateY(-1.2px) rotate(0.3deg); }
+  50% { transform: translateY(0.8px) rotate(-0.2deg); }
+  75% { transform: translateY(-0.5px) rotate(0.1deg); }
+}
 
+@keyframes windLineMove {
+  0% { transform: translateX(120px); opacity: 0; }
+  20% { opacity: 0.8; }
+  80% { opacity: 0.8; }
+  100% { transform: translateX(-120px); opacity: 0; }
+}
+
+@keyframes rimRotate {
+  0% { stroke-dashoffset: 0; }
+  100% { stroke-dashoffset: -14; }
+}
+
+.animate-car-bounce-3d {
+  animation: carVibrate3d 0.18s ease-in-out infinite;
+  transform-origin: 82px 78px;
+}
+
+.animate-wind-line-1 {
+  animation: windLineMove 1.2s linear infinite;
+}
+
+.animate-wind-line-2 {
+  animation: windLineMove 1.2s linear infinite;
+  animation-delay: 0.4s;
+}
+
+.animate-wind-line-3 {
+  animation: windLineMove 1.2s linear infinite;
+  animation-delay: 0.8s;
+}
+
+.animate-rim-rotate-custom {
+  animation: rimRotate 0.4s linear infinite;
+}
 
 @keyframes carRunCrash {
   0% {
