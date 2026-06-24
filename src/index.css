@@ -177,4 +177,91 @@ body {
   animation: roadPass 0.3s linear infinite;
 }
 
+@keyframes carRunCrash {
+  0% {
+    transform: translateX(-120px) scaleX(1) scaleY(1) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  38% {
+    /* Running / accelerating */
+    transform: translateX(20px) translateY(0) scaleX(1) scaleY(1) rotate(0deg);
+  }
+  40% {
+    /* Collision! Hits the wall on the right */
+    transform: translateX(45px) translateY(-4px) scaleX(0.7) scaleY(1.1) rotate(-15deg);
+  }
+  44% {
+    /* Bounce back from crash */
+    transform: translateX(22px) translateY(4px) scaleX(1) scaleY(0.95) rotate(8deg);
+  }
+  50% {
+    /* Shaking / settling */
+    transform: translateX(28px) translateY(0) scaleX(1) scaleY(1) rotate(0deg);
+  }
+  80% {
+    /* Stay crashed for a bit */
+    transform: translateX(28px) translateY(0) scaleX(1) scaleY(1) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    /* Fade out and reset */
+    transform: translateX(28px) translateY(0) scaleX(1) scaleY(1) rotate(0deg);
+    opacity: 0;
+  }
+}
+
+@keyframes wallImpact {
+  0%, 38% {
+    transform: scaleY(1) scaleX(1);
+    background-color: #984216;
+  }
+  40% {
+    transform: scaleY(1.2) scaleX(1.4);
+    background-color: #ef4444; /* Flash red on crash! */
+  }
+  44% {
+    transform: scaleY(0.9) scaleX(0.8);
+    background-color: #984216;
+  }
+  50%, 100% {
+    transform: scaleY(1) scaleX(1);
+    background-color: #984216;
+  }
+}
+
+@keyframes sparkExp {
+  0%, 38% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  40% {
+    transform: scale(1.4);
+    opacity: 1;
+  }
+  48% {
+    transform: scale(2.2);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(2.2);
+    opacity: 0;
+  }
+}
+
+.animate-car-run-crash {
+  animation: carRunCrash 3.2s cubic-bezier(0.25, 1, 0.5, 1) infinite;
+}
+
+.animate-wall-impact {
+  animation: wallImpact 3.2s ease infinite;
+}
+
+.animate-spark {
+  animation: sparkExp 3.2s ease infinite;
+}
+
+
 

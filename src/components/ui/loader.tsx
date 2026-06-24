@@ -1,42 +1,29 @@
 import { Car } from 'lucide-react'
 
 interface LoaderProps {
+  isOverlay?: boolean
   message?: string
   description?: string
-  isOverlay?: boolean
 }
 
-export function CarLoader({
-  message = 'Analyzing Vehicle',
-  description = 'Scanning image for damages, identifying affected parts, and sourcing repair costs...',
-  isOverlay = true,
-}: LoaderProps) {
+export function CarLoader({ isOverlay = true }: LoaderProps) {
   const content = (
-    <div className={`bg-white rounded-3xl p-8 max-w-sm w-full text-center ${isOverlay ? 'shadow-2xl border border-slate-100 flex flex-col items-center animate-in zoom-in-95 duration-300' : 'flex flex-col items-center'}`}>
-      {/* Animated Driving Car */}
-      <div className="relative mb-5 flex flex-col items-center justify-end h-16 w-48 overflow-hidden">
-        {/* Car Icon */}
-        <div className="text-[#984216] animate-car-engine mb-1">
-          <Car size={36} />
-        </div>
-        {/* Moving Road */}
-        <div className="w-full h-[2px] bg-slate-200 overflow-hidden relative">
-          <div className="absolute inset-0 animate-road-pass"></div>
-        </div>
-      </div>
+    <div className="relative w-64 h-32 flex items-center justify-center mx-auto">
+      {/* The Road Line */}
+      <div className="absolute bottom-6 left-4 right-4 h-[2px] bg-slate-400/30"></div>
       
-      <h3 className="text-xl font-black text-slate-900 mb-2">{message}</h3>
-      {description && (
-        <p className="text-slate-500 text-sm font-semibold mb-6 leading-relaxed">
-          {description}
-        </p>
-      )}
+      {/* The Wall/Barrier */}
+      <div className="absolute right-12 bottom-6 w-[6px] h-10 bg-[#984216] rounded-full origin-bottom animate-wall-impact"></div>
       
-      {/* Simple Pulsing Progress Bar */}
-      <div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden mb-2">
-        <div className="h-full bg-[#984216] rounded-full animate-pulse" style={{ width: '70%' }}></div>
+      {/* The Sparks on impact */}
+      <div className="absolute right-12 bottom-10 w-6 h-6 rounded-full bg-red-500/20 border border-red-500/40 flex items-center justify-center animate-spark">
+        <div className="w-1.5 h-1.5 rounded-full bg-yellow-400"></div>
       </div>
-      <span className="text-[10px] font-black uppercase tracking-wider text-[#984216]/70">Processing Pipeline</span>
+
+      {/* The Animated Car */}
+      <div className="absolute text-[#984216] animate-car-run-crash flex items-center justify-center" style={{ left: '50%', transform: 'translateX(-50%)' }}>
+        <Car size={64} />
+      </div>
     </div>
   )
 
